@@ -43,6 +43,12 @@ export default class PurchaseRequestService extends cds.ApplicationService {
       if ('requester' in req.data && isBlank(req.data.requester)) {
         return req.error(400, 'requester는 공백만 입력할 수 없습니다', 'requester')
       }
+      if (req.data.neededBy) {
+        const cur = await cds.db.run(SELECT.one.from('purchase.request.PurchaseRequests').columns('neededBy').where({ ID: req.params[0]?.ID ?? req.params[0] }))
+        if (String(req.data.neededBy) !== String(cur?.neededBy) && String(req.data.neededBy) < today()) {
+          return req.error(400, 'neededBy는 오늘보다 이전일 수 없습니다', 'neededBy')
+        }
+      }
       if (checkItems(req, req.data.items)) return
       delete req.data.status
     })

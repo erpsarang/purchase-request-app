@@ -35,7 +35,7 @@ SAP Fiori Elements(List Report + Object Page) 화면 앱은 `app/purchaserequest
 - 수정: `POST .../PurchaseRequests(ID=<ID>,IsActiveEntity=true)/PurchaseRequestService.draftEdit` (본문 `{"PreserveChanges": true}`) → 초안 `PATCH .../PurchaseRequests(ID=<ID>,IsActiveEntity=false)` → `draftActivate`
 - 삭제: `DELETE .../PurchaseRequests(ID=<ID>,IsActiveEntity=true)` → `204`
 
-필수값·과거 기한 검사는 초안 저장 단계가 아니라 활성화할 때 수행되며, 위반하면 `400`입니다(실패한 초안은 남습니다).
+필수값·과거 기한 검사는 초안 저장 단계가 아니라 활성화할 때 수행되며, 위반하면 `400`입니다(실패한 초안은 남습니다). 기존 구매요청을 편집해 저장(활성화)할 때도 필요일이 바뀌어 오늘보다 이전이면 `400`이며 활성 레코드의 값은 그대로입니다. 필요일을 바꾸지 않았거나 비우면 검사하지 않습니다.
 
 화면 구성 정의(UI 어노테이션: 목록·상세·입력 칸)는 `app/annotations.cds`에 있습니다.
 
@@ -65,7 +65,7 @@ SAP Fiori Elements(List Report + Object Page) 화면 앱은 `app/purchaserequest
 | requester | 문자 60자 | 필수, 활성화할 때 비었거나 공백만 있으면 `400` |
 | department | 문자 40자 | 선택 |
 | vendor | 문자 60자 | 선택 |
-| neededBy | 날짜 | 선택, 활성화할 때 오늘보다 이전이면 `400` |
+| neededBy | 날짜 | 선택, 활성화할 때 오늘보다 이전이면 `400`. 편집 후 저장 때도 필요일이 바뀌어 오늘보다 이전이면 `400`, 바꾸지 않았거나 비우면 검사하지 않음 |
 | status | 문자 10자 | `DRAFT`, `SUBMITTED`, `APPROVED`, `REJECTED` 중 하나. 읽기 전용, 등록하면 `DRAFT` |
 | rejectReason | 문자 200자 | 읽기 전용, 반려할 때 저장, 재작성해도 유지, 다시 상신하면 비움, 일반 수정으로 바꿀 수 없음 |
 | createdAt, createdBy, modifiedAt, modifiedBy | | CAP `managed`가 자동 기록 |
