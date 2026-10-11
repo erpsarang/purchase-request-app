@@ -9,6 +9,13 @@ const today = () => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
 }
 
+const checkItems = (req, items) => {
+  for (const it of items || []) {
+    if (it.quantity != null && !(Number(it.quantity) > 0)) return req.error(400, '수량은 0보다 커야 합니다', 'quantity')
+    if (it.price != null && !(Number(it.price) >= 0)) return req.error(400, '가격은 0 이상이어야 합니다', 'price')
+  }
+}
+
 export default class PurchaseRequestService extends cds.ApplicationService {
   init() {
     this.before('CREATE', 'PurchaseRequests', req => {
@@ -18,6 +25,7 @@ export default class PurchaseRequestService extends cds.ApplicationService {
       if (neededBy && String(neededBy) < today()) {
         return req.error(400, 'neededBy는 오늘보다 이전일 수 없습니다', 'neededBy')
       }
+      if (checkItems(req, req.data.items)) return
       req.data.status = 'DRAFT'
     })
 
@@ -35,6 +43,7 @@ export default class PurchaseRequestService extends cds.ApplicationService {
       if ('requester' in req.data && isBlank(req.data.requester)) {
         return req.error(400, 'requester는 공백만 입력할 수 없습니다', 'requester')
       }
+      if (checkItems(req, req.data.items)) return
       delete req.data.status
     })
 
@@ -44,6 +53,16 @@ export default class PurchaseRequestService extends cds.ApplicationService {
       if (row.status !== 'DRAFT') {
         return req.error(409, 'DRAFT 상태의 구매요청만 삭제할 수 있습니다')
       }
+    })
+
+    this.before(['CREATE', 'UPDATE', 'DELETE'], 'PurchaseRequestItems', async req => {
+      const itemId = req.params?.at(-1)?.ID ?? req.params?.at(-1)
+      const parentId = req.data?.request_ID ?? (itemId
+        ? (await cds.db.run(SELECT.one.from('purchase.request.PurchaseRequestItems').columns('request_ID').where({ ID: itemId })))?.request_ID
+        : undefined)
+      if (!parentId) return
+      const row = await cds.db.run(SELECT.one.from('purchase.request.PurchaseRequests').columns('status').where({ ID: parentId }))
+      if (row && row.status !== 'DRAFT') return req.error(409, 'DRAFT 상태의 품목만 바꿀 수 있습니다')
     })
 
     const transition = (action, from, to) => {
