@@ -21,7 +21,14 @@ export default class PurchaseRequestService extends cds.ApplicationService {
       req.data.status = 'DRAFT'
     })
 
-    this.before('UPDATE', 'PurchaseRequests', req => {
+    const guardEditable = async req => {
+      const row = await cds.db.run(SELECT.one.from('purchase.request.PurchaseRequests').columns('status').where({ ID: req.params[0]?.ID ?? req.params[0] }))
+      if (row && row.status !== 'DRAFT') return req.error(409, 'DRAFT 상태의 구매요청만 수정할 수 있습니다')
+    }
+    this.before('EDIT', 'PurchaseRequests', guardEditable)
+
+    this.before('UPDATE', 'PurchaseRequests', async req => {
+      await guardEditable(req)
       if ('title' in req.data && isBlank(req.data.title)) {
         return req.error(400, 'title은 공백만 입력할 수 없습니다', 'title')
       }
