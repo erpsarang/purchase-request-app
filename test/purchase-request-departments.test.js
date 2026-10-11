@@ -55,13 +55,16 @@ describe('Departments (value help)', () => {
     assert.strictEqual(res.data.value.find(r => r.code === 'D01').name, '컨설팅본부-EN')
   })
 
-  test('3. $metadata에 department 값 도움말이 Departments의 name을 가리킨다', async () => {
+  test('3. $metadata에서 department 칸에만 값 도움말이 붙고 Departments의 name을 가리킨다', async () => {
     const { data } = await GET(`${SRV}/$metadata`)
-    assert.ok(data.includes('Common.ValueList'))
-    assert.ok(data.includes('Departments'))
-    assert.ok(data.includes('ValueListParameterInOut'))
-    assert.ok(data.includes('ValueListProperty'))
-    assert.ok(data.includes('String="name"'))
+    const blocks = [...data.matchAll(/<Annotations Target="([^"]+)">([\s\S]*?)<\/Annotations>/g)]
+    const withValueList = blocks.filter(([, , body]) => body.includes('Term="Common.ValueList"'))
+    assert.deepStrictEqual(withValueList.map(([, target]) => target), ['PurchaseRequestService.PurchaseRequests/department'])
+    const body = withValueList[0][2]
+    assert.ok(body.includes('Property="CollectionPath" String="Departments"'))
+    assert.ok(body.includes('Common.ValueListParameterInOut'))
+    assert.ok(body.includes('Property="LocalDataProperty" PropertyPath="department"'))
+    assert.ok(body.includes('Property="ValueListProperty" String="name"'))
   })
 
   test('4. 목록의 이름으로 부서를 채워 등록·활성화하면 그대로 저장된다', async () => {
