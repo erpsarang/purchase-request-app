@@ -17,7 +17,7 @@ SAP Fiori Elements(List Report + Object Page) 화면 앱은 `app/purchaserequest
 1. `npm run start:cap` — 구매요청 서버 (포트 4004)
 2. `npm run start:ui` — 화면 서버 (포트 8080)
 
-브라우저에서 `http://localhost:8080/` 를 엽니다(주소 끝에 파일 이름을 붙이지 않습니다). 프록시가 `localhost`를 우회하지 않으면 `NO_PROXY=localhost,127.0.0.1`을 설정합니다.
+브라우저에서 이 컴퓨터(localhost)의 8080 포트 루트 주소를 엽니다(주소 끝에 파일 이름을 붙이지 않습니다). 프록시가 `localhost`를 우회하지 않으면 `NO_PROXY=localhost,127.0.0.1`을 설정합니다.
 
 - UI5 1.153.0 라이브러리는 `ui5.yaml`의 framework 설정에 따라 `@ui5/cli`가 npm에서 받아 이 컴퓨터 서버로만 서빙합니다. 최초 실행 때 약 10초, 291MB를 내려받습니다. 인터넷 CDN은 쓰지 않습니다.
 - `@sapui5/*` 패키지는 SAP Developer License 3.2를 따르며, 사용 여부는 사용자가 판단합니다.
