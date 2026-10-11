@@ -1,7 +1,7 @@
 # purchase-request-app
 구매요청 간이 관리
 
-구매요청을 등록·조회·수정·삭제하는 SAP CAP(Node.js) OData V4 서비스입니다. (2-1단계: 서버 — 초안(Draft) + 화면 구성 정의)
+구매요청을 등록·조회·수정·삭제하는 SAP CAP(Node.js) OData V4 서비스입니다. (2-2단계: 화면 — SAP Fiori Elements)
 
 ## 설치·실행·테스트
 
@@ -9,6 +9,19 @@
 - 테스트: `npm test` (테스트가 메모리 SQLite로 서버를 직접 띄우고 끕니다)
 - 모델 검증: `npm run build`
 - 실행: `npx cds-serve` (`@sap/cds` 패키지의 CLI를 사용하며 `@sap/cds-dk`는 필요하지 않습니다)
+
+## 화면 실행
+
+SAP Fiori Elements(List Report + Object Page) 화면 앱은 `app/purchaserequests/webapp` 아래에 있습니다. 두 터미널에서 각각 실행합니다.
+
+1. `npm run start:cap` — 구매요청 서버 (포트 4004)
+2. `npm run start:ui` — 화면 서버 (포트 8080)
+
+브라우저에서 이 컴퓨터(localhost)의 8080 포트 루트 주소를 엽니다(주소 끝에 파일 이름을 붙이지 않습니다). 프록시가 `localhost`를 우회하지 않으면 `NO_PROXY=localhost,127.0.0.1`을 설정합니다.
+
+- UI5 1.153.0 라이브러리는 `ui5.yaml`의 framework 설정에 따라 `@ui5/cli`가 npm에서 받아 이 컴퓨터 서버로만 서빙합니다. 최초 실행 때 약 10초, 291MB를 내려받습니다. 인터넷 CDN은 쓰지 않습니다.
+- `@sapui5/*` 패키지는 SAP Developer License 3.2를 따르며, 사용 여부는 사용자가 판단합니다.
+- 브라우저 콘솔의 ko_KR 메시지 번들 오류와 lrep/flex 요청 404는 정상이므로 무시해도 됩니다.
 
 ## API
 
@@ -45,4 +58,4 @@
 
 ## 이번 단계에서 하지 않는 것
 
-UI5 화면 앱, UI5 도구 설정, 승인·반려 동작, 인증(로그인), 초기 샘플 데이터. (화면 앱은 다음 단계 2-2에서 올립니다.)
+로그인(인증), 값 도움말, 승인·반려 동작, 품목, 사용자 정의 화면 코드, 초기 샘플 데이터.
