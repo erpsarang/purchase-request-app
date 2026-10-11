@@ -20,6 +20,7 @@ entity Departments {
 
 entity PurchaseRequestItems : cuid {
   request  : Association to PurchaseRequests;
+  lineNo   : Integer;
   item     : String(100);
   quantity : Decimal(13, 3);
   unit     : Association to Units @assert.target;

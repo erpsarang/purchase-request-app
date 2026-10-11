@@ -104,6 +104,10 @@ annotate service.PurchaseRequestItems with @(
     TypeName: '품목',
     TypeNamePlural: '품목'
   },
+  UI.PresentationVariant: {
+    SortOrder: [ { Property: lineNo, Descending: false } ],
+    Visualizations: [ '@UI.LineItem' ]
+  },
   UI.LineItem: [
     { Value: item },
     { Value: quantity },
