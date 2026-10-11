@@ -10,6 +10,7 @@ annotate service.PurchaseRequests with {
 };
 
 annotate service.PurchaseRequests with @(
+  UI.UpdateHidden: (status != 'DRAFT'),
   UI.HeaderInfo: {
     TypeName: '구매요청',
     TypeNamePlural: '구매요청',
