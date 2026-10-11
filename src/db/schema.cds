@@ -8,4 +8,5 @@ entity PurchaseRequests : cuid, managed {
   department : String(40);
   neededBy   : Date;
   status     : String(10) enum { DRAFT; SUBMITTED; APPROVED; REJECTED; } default 'DRAFT';
+  rejectReason : String(200);
 }
