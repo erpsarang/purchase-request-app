@@ -1,7 +1,7 @@
 # purchase-request-app
 구매요청 간이 관리
 
-구매요청을 등록·조회·수정·삭제하는 SAP CAP(Node.js) OData V4 서비스입니다. (2-2단계: 화면 — SAP Fiori Elements)
+구매요청을 등록·조회·수정·삭제하는 SAP CAP(Node.js) OData V4 서비스입니다. (3단계: 상신·승인·반려 — SAP Fiori Elements 화면 포함)
 
 ## 설치·실행·테스트
 
@@ -39,6 +39,20 @@ SAP Fiori Elements(List Report + Object Page) 화면 앱은 `app/purchaserequest
 
 화면 구성 정의(UI 어노테이션: 목록·상세·입력 칸)는 `app/annotations.cds`에 있습니다.
 
+## 상태 전환 동작 (상신·승인·반려)
+
+세 동작은 활성 레코드에 대해 호출합니다. 활성 레코드 주소 뒤에 서비스 이름을 붙인 동작 이름(`submit`, `approve`, `reject`)으로 POST합니다. 성공하면 본문 없이 `204`를 돌려줍니다. 초안 레코드에는 동작이 없으므로 화면에서는 편집 중에 버튼을 숨깁니다.
+
+| 동작 | 화면 버튼 | 허용 상태 | 결과 상태 |
+|---|---|---|---|
+| submit | 상신 | `DRAFT` | `SUBMITTED` |
+| approve | 승인 | `SUBMITTED` | `APPROVED` |
+| reject | 반려 | `SUBMITTED` | `REJECTED` |
+
+- 현재 상태가 허용 상태가 아니면 `409`이고 상태는 그대로입니다.
+- 반려에는 반려 사유(`reason`)가 필수입니다. 없거나 공백만 있으면 `400`이고 상태는 그대로입니다. 200자 이하여야 하며, 앞뒤 공백을 지운 값이 `rejectReason`에 저장되어 상세 화면 기본 정보에 "반려 사유"로 보입니다.
+- 대상 구매요청이 없으면 `404`입니다.
+
 ## 필드 규칙
 
 | 필드 | 형식 | 규칙 |
@@ -49,6 +63,7 @@ SAP Fiori Elements(List Report + Object Page) 화면 앱은 `app/purchaserequest
 | department | 문자 40자 | 선택 |
 | neededBy | 날짜 | 선택, 활성화할 때 오늘보다 이전이면 `400` |
 | status | 문자 10자 | `DRAFT`, `SUBMITTED`, `APPROVED`, `REJECTED` 중 하나. 읽기 전용, 등록하면 `DRAFT` |
+| rejectReason | 문자 200자 | 읽기 전용, 반려할 때 저장, 일반 수정으로 바꿀 수 없음 |
 | createdAt, createdBy, modifiedAt, modifiedBy | | CAP `managed`가 자동 기록 |
 
 ## status·삭제 정책
@@ -58,4 +73,4 @@ SAP Fiori Elements(List Report + Object Page) 화면 앱은 `app/purchaserequest
 
 ## 이번 단계에서 하지 않는 것
 
-로그인(인증), 값 도움말, 승인·반려 동작, 품목, 사용자 정의 화면 코드, 초기 샘플 데이터.
+로그인(인증), 값 도움말, 품목, 사용자 정의 화면 코드, 초기 샘플 데이터, 사용자·역할 구분, 승인자 기록, 목록 화면 버튼, 상신 후 수정 제한, 이력.

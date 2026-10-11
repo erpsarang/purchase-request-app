@@ -6,6 +6,7 @@ annotate service.PurchaseRequests with {
   department @title: '부서';
   neededBy   @title: '필요일';
   status     @title: '상태';
+  rejectReason @title: '반려 사유';
 };
 
 annotate service.PurchaseRequests with @(
@@ -32,7 +33,32 @@ annotate service.PurchaseRequests with @(
       { Value: requester },
       { Value: department },
       { Value: neededBy },
-      { Value: status }
+      { Value: status },
+      { Value: rejectReason }
     ]
-  }
+  },
+  UI.Identification: [
+    {
+      $Type: 'UI.DataFieldForAction',
+      Action: 'PurchaseRequestService.submit',
+      Label: '상신',
+      ![@UI.Hidden]: { $edmJson: { $Not: { $Path: 'IsActiveEntity' } } }
+    },
+    {
+      $Type: 'UI.DataFieldForAction',
+      Action: 'PurchaseRequestService.approve',
+      Label: '승인',
+      ![@UI.Hidden]: { $edmJson: { $Not: { $Path: 'IsActiveEntity' } } }
+    },
+    {
+      $Type: 'UI.DataFieldForAction',
+      Action: 'PurchaseRequestService.reject',
+      Label: '반려',
+      ![@UI.Hidden]: { $edmJson: { $Not: { $Path: 'IsActiveEntity' } } }
+    }
+  ]
 );
+
+annotate service.PurchaseRequests actions {
+  reject(reason @title: '반려 사유');
+};

@@ -39,6 +39,24 @@ export default class PurchaseRequestService extends cds.ApplicationService {
       }
     })
 
+    const transition = (action, from, to) => {
+      this.on(action, 'PurchaseRequests', async req => {
+        const { ID } = req.params[0]
+        const row = await cds.db.run(SELECT.one.from('purchase.request.PurchaseRequests').columns('status').where({ ID }))
+        if (!row) return req.error(404, '구매요청을 찾을 수 없습니다')
+        if (row.status !== from) return req.error(409, `${from} 상태의 구매요청만 처리할 수 있습니다`)
+        const data = { status: to }
+        if (action === 'reject') {
+          if (isBlank(req.data.reason)) return req.error(400, '반려 사유는 필수입니다', 'reason')
+          data.rejectReason = req.data.reason.trim()
+        }
+        await cds.db.run(UPDATE('purchase.request.PurchaseRequests').set(data).where({ ID }))
+      })
+    }
+    transition('submit', 'DRAFT', 'SUBMITTED')
+    transition('approve', 'SUBMITTED', 'APPROVED')
+    transition('reject', 'SUBMITTED', 'REJECTED')
+
     return super.init()
   }
 }
