@@ -4,7 +4,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node -e \"console.log('build: 아직 빌드할 코드가 없습니다')\"",
-    "test": "node -e \"console.log('test: 아직 테스트가 없습니다')\""
+    "build": "node -e \"require('@sap/cds').load('*').then(m=>{if(!m||!m.definitions)process.exit(1)})\"",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "dependencies": {
+    "@cap-js/sqlite": "^3",
+    "@sap/cds": "^10"
+  },
+  "devDependencies": {
+    "@cap-js/cds-test": "^1"
+  },
+  "cds": {
+    "folders": {
+      "db": "src/db",
+      "srv": "src/srv"
+    }
   }
 }
