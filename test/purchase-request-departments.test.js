@@ -59,8 +59,12 @@ describe('Departments (value help)', () => {
     const { data } = await GET(`${SRV}/$metadata`)
     const blocks = [...data.matchAll(/<Annotations Target="([^"]+)">([\s\S]*?)<\/Annotations>/g)]
     const withValueList = blocks.filter(([, , body]) => body.includes('Term="Common.ValueList"'))
-    assert.deepStrictEqual(withValueList.map(([, target]) => target), ['PurchaseRequestService.PurchaseRequests/department'])
-    const body = withValueList[0][2]
+    assert.deepStrictEqual(withValueList.map(([, target]) => target).sort(), [
+      'PurchaseRequestService.PurchaseRequestItems/currency_code',
+      'PurchaseRequestService.PurchaseRequestItems/unit_code',
+      'PurchaseRequestService.PurchaseRequests/department'
+    ])
+    const body = withValueList.find(([, target]) => target === 'PurchaseRequestService.PurchaseRequests/department')[2]
     assert.ok(body.includes('Property="CollectionPath" String="Departments"'))
     assert.ok(body.includes('Common.ValueListParameterInOut'))
     assert.ok(body.includes('Property="LocalDataProperty" PropertyPath="department"'))
