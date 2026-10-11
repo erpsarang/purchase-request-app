@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start:cap": "cds-serve",
+    "start:ui": "ui5 serve --port 8080",
     "build": "node -e \"require('@sap/cds').load('*').then(m=>{if(!m||!m.definitions)process.exit(1)})\"",
     "test": "node --test \"test/*.test.js\""
   },
@@ -12,7 +14,9 @@
     "@sap/cds": "^10"
   },
   "devDependencies": {
-    "@cap-js/cds-test": "^1"
+    "@cap-js/cds-test": "^1",
+    "@ui5/cli": "^4",
+    "ui5-middleware-simpleproxy": "^3"
   },
   "cds": {
     "folders": {
