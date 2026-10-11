@@ -1,0 +1,9 @@
+{
+  "name": "purchase-request-app",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node -e \"console.log('build: 아직 빌드할 코드가 없습니다')\"",
+    "test": "node -e \"console.log('test: 아직 테스트가 없습니다')\""
+  }
+}
