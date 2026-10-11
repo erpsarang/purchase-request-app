@@ -30,7 +30,7 @@ annotate service.PurchaseRequests with @(
   UI.Facets: [
     { $Type: 'UI.ReferenceFacet', Label: '기본 정보', Target: '@UI.FieldGroup#Main' },
     { $Type: 'UI.ReferenceFacet', Label: '공급업체', Target: '@UI.FieldGroup#Vendor' },
-    { $Type: 'UI.ReferenceFacet', Label: '품목', Target: 'items/@UI.LineItem' }
+    { $Type: 'UI.ReferenceFacet', Label: '품목', Target: 'items/@UI.PresentationVariant' }
   ],
   UI.FieldGroup #Vendor: {
     Data: [
