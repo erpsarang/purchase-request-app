@@ -1,6 +1,7 @@
 using { purchase.request as db } from '../db/schema';
 
 service PurchaseRequestService {
+  @odata.draft.enabled
   entity PurchaseRequests as projection on db.PurchaseRequests;
 }
 
