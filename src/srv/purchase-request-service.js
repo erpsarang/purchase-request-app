@@ -71,6 +71,28 @@ export default class PurchaseRequestService extends cds.ApplicationService {
       if (row && row.status !== 'DRAFT') return req.error(409, 'DRAFT 상태의 품목만 바꿀 수 있습니다')
     })
 
+    // 품목 순서 번호(lineNo)는 서비스가 매기며 읽기 전용이다
+    this.before('NEW', 'PurchaseRequests.drafts', req => {
+      if (Array.isArray(req.data.items)) req.data.items.forEach((it, i) => { it.lineNo = i + 1 })
+    })
+
+    this.before('NEW', 'PurchaseRequestItems.drafts', async req => {
+      const p = req.params?.[0]
+      const parentId = req.data?.request_ID ?? p?.ID ?? p
+      let max = 0
+      if (parentId) {
+        const { PurchaseRequestItems } = this.entities
+        for (const source of ['purchase.request.PurchaseRequestItems', PurchaseRequestItems.drafts]) {
+          const rows = await cds.db.run(SELECT.from(source).columns('lineNo').where({ request_ID: parentId }))
+          for (const r of rows) max = Math.max(max, Number(r.lineNo) || 0)
+        }
+      }
+      req.data.lineNo = max + 1
+    })
+
+    this.before(['PATCH', 'UPDATE'], 'PurchaseRequestItems.drafts', req => { delete req.data.lineNo })
+    this.before('UPDATE', 'PurchaseRequestItems', req => { delete req.data.lineNo })
+
     const transition = (action, from, to) => {
       this.on(action, 'PurchaseRequests', async req => {
         const { ID } = req.params[0]
