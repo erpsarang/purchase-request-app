@@ -69,3 +69,12 @@ annotate service.PurchaseRequests with @(
 annotate service.PurchaseRequests actions {
   reject(reason @title: '반려 사유');
 };
+
+annotate service.PurchaseRequests with {
+  department @Common.ValueList: {
+    CollectionPath: 'Departments',
+    Parameters: [
+      { $Type: 'Common.ValueListParameterInOut', LocalDataProperty: department, ValueListProperty: 'name' }
+    ]
+  };
+};

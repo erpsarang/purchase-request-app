@@ -1,6 +1,9 @@
 using { purchase.request as db } from '../db/schema';
 
 service PurchaseRequestService {
+  @readonly
+  entity Departments as projection on db.Departments;
+
   @odata.draft.enabled
   entity PurchaseRequests as projection on db.PurchaseRequests actions {
     @Core.OperationAvailable: ($self.status = 'DRAFT')

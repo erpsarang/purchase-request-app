@@ -10,3 +10,8 @@ entity PurchaseRequests : cuid, managed {
   status     : String(10) enum { DRAFT; SUBMITTED; APPROVED; REJECTED; } default 'DRAFT';
   rejectReason : String(200);
 }
+
+entity Departments {
+  key code : String(40);
+  name : String(40);
+}
