@@ -53,6 +53,7 @@ export default class PurchaseRequestService extends cds.ApplicationService {
         if (!row) return req.error(404, '구매요청을 찾을 수 없습니다')
         if (row.status !== from) return req.error(409, `${from} 상태의 구매요청만 처리할 수 있습니다`)
         const data = { status: to }
+        if (action === 'submit') data.rejectReason = null
         if (action === 'reject') {
           if (isBlank(req.data.reason)) return req.error(400, '반려 사유는 필수입니다', 'reason')
           data.rejectReason = req.data.reason.trim()
@@ -63,6 +64,7 @@ export default class PurchaseRequestService extends cds.ApplicationService {
     transition('submit', 'DRAFT', 'SUBMITTED')
     transition('approve', 'SUBMITTED', 'APPROVED')
     transition('reject', 'SUBMITTED', 'REJECTED')
+    transition('reopen', 'REJECTED', 'DRAFT')
 
     return super.init()
   }

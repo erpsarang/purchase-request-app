@@ -12,6 +12,9 @@ service PurchaseRequestService {
     @Core.OperationAvailable: ($self.status = 'SUBMITTED')
     @Common.SideEffects: { TargetEntities: ['in'] }
     action reject(reason : String(200));
+    @Core.OperationAvailable: ($self.status = 'REJECTED')
+    @Common.SideEffects: { TargetEntities: ['in'] }
+    action reopen();
   };
 }
 

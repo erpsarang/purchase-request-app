@@ -56,6 +56,12 @@ annotate service.PurchaseRequests with @(
       Action: 'PurchaseRequestService.reject',
       Label: '반려',
       ![@UI.Hidden]: { $edmJson: { $Not: { $Path: 'IsActiveEntity' } } }
+    },
+    {
+      $Type: 'UI.DataFieldForAction',
+      Action: 'PurchaseRequestService.reopen',
+      Label: '재작성',
+      ![@UI.Hidden]: { $edmJson: { $Not: { $Path: 'IsActiveEntity' } } }
     }
   ]
 );
